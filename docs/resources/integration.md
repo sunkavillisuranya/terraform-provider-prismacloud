@@ -48,6 +48,10 @@ Refer to the [Prisma Cloud integration documentation](https://api.docs.prismaclo
 * `integration_key` - PagerDuty integration key.
 * `source_id` - GCP Source ID for Google CSCC integration.
 * `org_id` - GCP Organization ID for Google CSCC integration.
+* `host_url` - ServiceNow URL for Servicenow integration/ Jira URL for jira integration.
+* `consumer_key` - Consumer Key.
+* `jira_username` - Jira User Name.
+* `jira_password` - Jira App password.
 
 ### Headers
 
