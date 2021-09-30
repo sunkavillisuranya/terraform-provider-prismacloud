@@ -137,6 +137,7 @@ func timeRangeSchema(style string) *schema.Schema {
 	default:
 		ans.Optional = true
 		ans.Computed = true
+		//ans.Required = true
 
 		model.Schema["absolute"].Optional = true
 		absolute_resource.Schema["start"].Required = true

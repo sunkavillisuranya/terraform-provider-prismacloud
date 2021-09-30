@@ -151,10 +151,10 @@ func dataSourceIntegration() *schema.Resource {
 						"host_url": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Description: "ServiceNow URL",
+							Description: "ServiceNow/Jira URL",
 						},
-						"secret_key":{
-							Type: 		schema.TypeString,
+						"secret_key": {
+							Type:        schema.TypeString,
 							Computed:    true,
 							Description: "Jira Secret Key",
 						},
