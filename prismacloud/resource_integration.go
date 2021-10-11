@@ -164,14 +164,54 @@ func resourceIntegration() *schema.Resource {
 							Optional:    true,
 							Description: "(Qualys/ServiceNow) Password",
 						},
+						"user_name": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Snow Flake Username",
+						},
+						"pipe_name": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Snow Flake Pipename",
+						},
+						"private_key": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Snow Flake private key",
+						},
+						"pass_phrase": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Snow Flake Pass phrase ",
+						},
+						"staging_integration_id": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Amazon S3 Id for snowflake integration",
+						},
+						"domain": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Okta Domain",
+						},
+						"api_token": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Okta API Token",
+						},
+						"api_key": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Demisto API key",
+						},
 						"host_url": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: "ServiceNow URL",
+							Description: "ServiceNow/Jira/Demisto URL",
 						},
 						"secret_key": {
 							Type:        schema.TypeString,
-							Computed:    true,
+							Optional:    true,
 							Description: "Jira Secret Key",
 						},
 						"oauth_token": {
@@ -183,6 +223,11 @@ func resourceIntegration() *schema.Resource {
 							Type:        schema.TypeString,
 							Optional:    true,
 							Description: "Jira consumer key",
+						},
+						"access_key": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Tenable access key",
 						},
 						"tables": {
 							Type:        schema.TypeMap,
@@ -335,50 +380,51 @@ func parseIntegration(d *schema.ResourceData, id string, c pc.PrismaCloudClient)
 	ic := ResourceDataInterfaceMap(d, "integration_config")
 	var secretKey string
 	var oauthToken string
+	secretKey = ic["secret_key"].(string)
 
-	if d.Get("integration_type") == "jira"{
-	var authjiraurl integration.AuthUrl
-	authjiraurl.HostUrl = ic["host_url"].(string)
-	authjiraurl.ConsumerKey = ic["consumer_key"].(string)
-	authurlresponse, err := integration.JiraAuthurl(c, authjiraurl)
-	if err != nil{
-	log.Printf("[WARN] Error getting Jira Auth URl %s", err)
-	}
-	var seckeyjira  integration.SecretKeyJira
-	tokenfromUrl := strings.Split(authurlresponse, "=")[1]
-	token := tokenfromUrl[:len(tokenfromUrl)-1]
-	seckeyjira.OauthToken = token
-	seckeyjira.JiraUserName = d.Get("jira_username").(string)
-	seckeyjira.JiraPassword = d.Get("jira_password").(string)
-	secretKey, err = integration.JiraSecretKey(c, seckeyjira, ic["host_url"].(string))
-	if err != nil{
-	log.Printf("[WARN] Error getting Jira secret Key %s", err)
-	}
-
-	var oauthtoken  integration.OauthTokenJira
-	oauthtoken.AuthenticationUrl = authurlresponse[1: len(authurlresponse) -1]
-	oauthtoken.HostUrl = ic["host_url"].(string)
-	oauthtoken.ConsumerKey = ic["consumer_key"].(string)
-	oauthtoken.SecretKey = secretKey
-	oauthtoken.TmpToken = token
-	tokenresponse, err := integration.JiraOauthToken(c, oauthtoken)
-	if err != nil{
-	log.Printf("[WARN] Error getting Jira Oauth Token %s", err)
-	}
-
-	oauthToken = tokenresponse[1:len(tokenresponse)-1]
-	}
-		var tables []map[string]bool
-		var headers []integration.Header
-		var regions []integration.Region
-
-		if ic["tables"] != nil && len(ic["tables"].(map[string]interface{})) > 0 {
-			tlist := ic["tables"].(map[string]interface{})
-			tables = make([]map[string]bool, 0, len(tlist))
-			for key, value := range tlist {
-				tables = append(tables, map[string]bool{key: value.(bool)})
-			}
+	if d.Get("integration_type") == "jira" {
+		var authjiraurl integration.AuthUrl
+		authjiraurl.HostUrl = ic["host_url"].(string)
+		authjiraurl.ConsumerKey = ic["consumer_key"].(string)
+		authurlresponse, err := integration.JiraAuthurl(c, authjiraurl)
+		if err != nil {
+			log.Printf("[WARN] Error getting Jira Auth URl %s", err)
 		}
+		var seckeyjira integration.SecretKeyJira
+		tokenfromUrl := strings.Split(authurlresponse, "=")[1]
+		token := tokenfromUrl[:len(tokenfromUrl)-1]
+		seckeyjira.OauthToken = token
+		seckeyjira.JiraUserName = d.Get("jira_username").(string)
+		seckeyjira.JiraPassword = d.Get("jira_password").(string)
+		secretKey, err = integration.JiraSecretKey(c, seckeyjira, ic["host_url"].(string))
+		if err != nil {
+			log.Printf("[WARN] Error getting Jira secret Key %s", err)
+		}
+
+		var oauthtoken integration.OauthTokenJira
+		oauthtoken.AuthenticationUrl = authurlresponse[1 : len(authurlresponse)-1]
+		oauthtoken.HostUrl = ic["host_url"].(string)
+		oauthtoken.ConsumerKey = ic["consumer_key"].(string)
+		oauthtoken.SecretKey = secretKey
+		oauthtoken.TmpToken = token
+		tokenresponse, err := integration.JiraOauthToken(c, oauthtoken)
+		if err != nil {
+			log.Printf("[WARN] Error getting Jira Oauth Token %s", err)
+		}
+
+		oauthToken = tokenresponse[1 : len(tokenresponse)-1]
+	}
+	var tables []map[string]bool
+	var headers []integration.Header
+	var regions []integration.Region
+
+	if ic["tables"] != nil && len(ic["tables"].(map[string]interface{})) > 0 {
+		tlist := ic["tables"].(map[string]interface{})
+		tables = make([]map[string]bool, 0, len(tlist))
+		for key, value := range tlist {
+			tables = append(tables, map[string]bool{key: value.(bool)})
+		}
+	}
 
 	if ic["headers"] != nil && len(ic["headers"].([]interface{})) > 0 {
 		hlist := ic["headers"].([]interface{})
@@ -414,30 +460,39 @@ func parseIntegration(d *schema.ResourceData, id string, c pc.PrismaCloudClient)
 		Description:     d.Get("description").(string),
 		IntegrationType: d.Get("integration_type").(string),
 		IntegrationConfig: integration.IntegrationConfig{
-			QueueUrl:       ic["queue_url"].(string),
-			Login:          ic["login"].(string),
-			BaseUrl:        ic["base_url"].(string),
-			Password:       ic["password"].(string),
-			HostUrl:        ic["host_url"].(string),
-			Tables:         tables,
-			Version:        ic["version"].(string),
-			Url:            ic["url"].(string),
-			Headers:        headers,
-			AuthToken:      ic["auth_token"].(string),
-			IntegrationKey: ic["integration_key"].(string),
-			SourceId:       ic["source_id"].(string),
-			OrgId:          ic["org_id"].(string),
-			AccountId:      ic["account_id"].(string),
-			Regions:        regions,
-			S3Uri:          ic["s3_uri"].(string),
-			Region:         ic["region"].(string),
-			RoleArn:        ic["role_arn"].(string),
-			ExternalId:     ic["external_id"].(string),
-			RollUpInterval: ic["roll_up_interval"].(int),
-			SourceType:     ic["source_type"].(string),
-			ConsumerKey:    ic["consumer_key"].(string),
-			SecretKey:      secretKey,
-			OauthToken:    	oauthToken,
+			QueueUrl:             ic["queue_url"].(string),
+			Login:                ic["login"].(string),
+			BaseUrl:              ic["base_url"].(string),
+			Password:             ic["password"].(string),
+			HostUrl:              ic["host_url"].(string),
+			Tables:               tables,
+			Version:              ic["version"].(string),
+			Url:                  ic["url"].(string),
+			Headers:              headers,
+			AuthToken:            ic["auth_token"].(string),
+			IntegrationKey:       ic["integration_key"].(string),
+			SourceId:             ic["source_id"].(string),
+			OrgId:                ic["org_id"].(string),
+			AccountId:            ic["account_id"].(string),
+			Regions:              regions,
+			S3Uri:                ic["s3_uri"].(string),
+			Region:               ic["region"].(string),
+			RoleArn:              ic["role_arn"].(string),
+			ExternalId:           ic["external_id"].(string),
+			RollUpInterval:       ic["roll_up_interval"].(int),
+			SourceType:           ic["source_type"].(string),
+			ConsumerKey:          ic["consumer_key"].(string),
+			SecretKey:            secretKey,
+			OauthToken:           oauthToken,
+			AccessKey:            ic["access_key"].(string),
+			ApiKey:               ic["api_key"].(string),
+			Domain:               ic["domain"].(string),
+			ApiToken:             ic["api_token"].(string),
+			UserName:             ic["user_name"].(string),
+			PassPhrase:           ic["pass_phrase"].(string),
+			PrivateKey:           ic["private_key"].(string),
+			PipeName:             ic["pipe_name"].(string),
+			StagingIntegrationID: ic["staging_integration_id"].(string),
 		},
 		Enabled: d.Get("enabled").(bool),
 	}
@@ -476,30 +531,39 @@ func saveIntegration(d *schema.ResourceData, o integration.Integration) {
 	}
 
 	ic := map[string]interface{}{
-		"queue_url":        o.IntegrationConfig.QueueUrl,
-		"login":            o.IntegrationConfig.Login,
-		"base_url":         o.IntegrationConfig.BaseUrl,
-		"password":         o.IntegrationConfig.Password,
-		"host_url":         o.IntegrationConfig.HostUrl,
-		"tables":           nil,
-		"version":          o.IntegrationConfig.Version,
-		"url":              o.IntegrationConfig.Url,
-		"headers":          nil,
-		"auth_token":       o.IntegrationConfig.AuthToken,
-		"integration_key":  o.IntegrationConfig.IntegrationKey,
-		"source_id":        o.IntegrationConfig.SourceId,
-		"org_id":           o.IntegrationConfig.OrgId,
-		"account_id":       o.IntegrationConfig.AccountId,
-		"regions":          nil,
-		"s3_uri":           o.IntegrationConfig.S3Uri,
-		"region":           o.IntegrationConfig.Region,
-		"role_arn":         o.IntegrationConfig.RoleArn,
-		"external_id":      o.IntegrationConfig.ExternalId,
-		"roll_up_interval": o.IntegrationConfig.RollUpInterval,
-		"source_type":      o.IntegrationConfig.SourceType,
-		"consumer_key":    o.IntegrationConfig.ConsumerKey,
-		"secret_key":      o.IntegrationConfig.SecretKey,
-		"oauth_token":     o.IntegrationConfig.OauthToken,
+		"queue_url":              o.IntegrationConfig.QueueUrl,
+		"login":                  o.IntegrationConfig.Login,
+		"base_url":               o.IntegrationConfig.BaseUrl,
+		"password":               o.IntegrationConfig.Password,
+		"host_url":               o.IntegrationConfig.HostUrl,
+		"tables":                 nil,
+		"version":                o.IntegrationConfig.Version,
+		"url":                    o.IntegrationConfig.Url,
+		"headers":                nil,
+		"auth_token":             o.IntegrationConfig.AuthToken,
+		"integration_key":        o.IntegrationConfig.IntegrationKey,
+		"source_id":              o.IntegrationConfig.SourceId,
+		"org_id":                 o.IntegrationConfig.OrgId,
+		"account_id":             o.IntegrationConfig.AccountId,
+		"regions":                nil,
+		"s3_uri":                 o.IntegrationConfig.S3Uri,
+		"region":                 o.IntegrationConfig.Region,
+		"role_arn":               o.IntegrationConfig.RoleArn,
+		"external_id":            o.IntegrationConfig.ExternalId,
+		"roll_up_interval":       o.IntegrationConfig.RollUpInterval,
+		"source_type":            o.IntegrationConfig.SourceType,
+		"consumer_key":           o.IntegrationConfig.ConsumerKey,
+		"secret_key":             o.IntegrationConfig.SecretKey,
+		"oauth_token":            o.IntegrationConfig.OauthToken,
+		"access_key":             o.IntegrationConfig.AccessKey,
+		"api_key":                o.IntegrationConfig.ApiKey,
+		"domain":                 o.IntegrationConfig.Domain,
+		"api_token":              o.IntegrationConfig.ApiToken,
+		"user_name":              o.IntegrationConfig.UserName,
+		"pass_phrase":            o.IntegrationConfig.PassPhrase,
+		"pipe_name":              o.IntegrationConfig.PipeName,
+		"private_key":            o.IntegrationConfig.PrivateKey,
+		"staging_integration_id": o.IntegrationConfig.StagingIntegrationID,
 	}
 	if len(o.IntegrationConfig.Tables) != 0 {
 		tables := make(map[string]interface{})

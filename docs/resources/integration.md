@@ -36,7 +36,6 @@ Refer to the [Prisma Cloud integration documentation](https://api.docs.prismaclo
 * `login` - (Qualys/ServiceNow) Login.
 * `base_url` - Qualys Security Operations Center server API URL (without "http(s)")
 * `password` - (Qualys/ServiceNow) Password
-* `host_url` - ServiceNow URL.
 * `tables` - (Map of bools) Key/value pairs that identify the ServiceNow module tables with which to integrate (e.g. - incident, sn_si_incident, or em_event).
 * `version` - ServiceNow release version.
 * `url` - Webhook URL.
@@ -45,6 +44,21 @@ Refer to the [Prisma Cloud integration documentation](https://api.docs.prismaclo
 * `integration_key` - PagerDuty integration key.
 * `source_id` - GCP Source ID for Google CSCC integration.
 * `org_id` - GCP Organization ID for Google CSCC integration.
+* `api_key` - Demisto Api Key.
+* `host_url` - ServiceNow URL/Jira/Demisto URL.
+* `access_key` - Access Key for Demisto.
+* `secret_key` - Secret Key for Jira/Demisto.
+* `consumer_key` - Consumer Key for Jira integration.
+* `jira_username` - Jira Username for Jira integration.
+* `jira_password` - Jira App password Jira integration.
+* `domain` - Okta Domain.
+* `api_token` - Okta API token.
+* `user_name` - Snowflake username.
+* `pipe_name` - Snowflake pipename.
+* `pass_phrase` - Snowflake PassPharse.
+* `private_key` - Snowflake Private Key.
+* `roll_up_interval` - File Roll up time for Snowflake.
+* `staging_integration_id` - Amazon S3 integration Id for snowflake Integration.
 
 ### Headers
 
@@ -63,6 +77,7 @@ Refer to the [Prisma Cloud integration documentation](https://api.docs.prismaclo
 * `last_modified_by` - Last modified by.
 * `last_modified_ts` - (int) Last modified timestamp.
 * `reason` - Model for the integration status details, as defined [below](#reason).
+* `oauth_token` - Token for jira integration.
 
 ### Reason
 
