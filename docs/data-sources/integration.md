@@ -53,8 +53,13 @@ One of the following must be specified:
 * `queue_url` - The Queue URL you used when you configured Prisma Cloud in Amazon SQS
 * `login` - (Qualys/ServiceNow) Login.
 * `base_url` - Qualys Security Operations Center server API URL (without "http(s)")
-* `password` - (Qualys/ServiceNow) Password
-* `host_url` - ServiceNow URL.
+* `password` - (Qualys/ServiceNow) Password.
+* `api_key` - Demisto Api Key.
+* `host_url` - ServiceNow URL/Jira/Demisto URL.
+* `secret_key` - Secret Key for Jira/Demisto.
+* `access_key` - Access Key for Demisto.
+* `oauth_token` - Oauth Token for Jira.
+* `consumer_key` - Consumer Key for jira Integration.
 * `tables` - (Map of bools) Key/value pairs that identify the ServiceNow module tables with which to integrate (e.g. - incident, sn_si_incident, or em_event).
 * `version` - ServiceNow release version.
 * `url` - Webhook URL.
@@ -63,6 +68,13 @@ One of the following must be specified:
 * `integration_key` - PagerDuty integration key.
 * `source_id` - GCP Source ID for Google CSCC integration.
 * `org_id` - GCP Organization ID for Google CSCC integration.
+* `domain` - Okta Domain.
+* `api_token` - Okta API token.
+* `user_name` - Snowflake username.
+* `pipe_name` - Snowflake pipename.
+* `pass_phrase` - Snowflake PassPharse.
+* `private_key` - Snowflake Private Key.
+* `staging_integration_id` - Amazon S3 integration Id for snowflake Integration.
 
 ### Headers
 

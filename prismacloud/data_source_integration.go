@@ -151,7 +151,57 @@ func dataSourceIntegration() *schema.Resource {
 						"host_url": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Description: "ServiceNow URL",
+							Description: "ServiceNow/Jira/Demisto URL",
+						},
+						"user_name": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Snow Flake Username",
+						},
+						"pipe_name": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Snow Flake Pipename",
+						},
+						"private_key": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Snow Flake private key",
+						},
+						"pass_phrase": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Snow Flake Pass phrase ",
+						},
+						"staging_integration_id": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Amazon s3 ID fro snowflake integration",
+						},
+						"domain": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Okta Domain",
+						},
+						"api_token": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Okta API Token",
+						},
+						"api_key": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Demisto API key",
+						},
+						"access_key": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Api access key",
+						},
+						"secret_key": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Jira/Api Secret key",
 						},
 						"tables": {
 							Type:        schema.TypeMap,
